@@ -2,43 +2,16 @@ local ui = loadstring(game:HttpGet(
     "https://github.com/Footagesus/WindUI/releases/latest/download/main.lua"
 ))()
 
-------------------------------------------------------------------------
--- COLORS / MM2 THEME
-------------------------------------------------------------------------
+-- ========================== BASE COLORS ==========================
 local Colors = {
-    Gold      = Color3.fromHex("#FFD700"),
-    Red       = Color3.fromHex("#FF0000"),
-    Green     = Color3.fromHex("#00FF00"),
-    Blue      = Color3.fromHex("#1E90FF"),
-    Purple    = Color3.fromHex("#9D4EDD"),
-    Orange    = Color3.fromHex("#FF7518"),
-    Toxic     = Color3.fromHex("#39FF14"),
-    LightBlue = Color3.fromHex("#7DD3FC"),
-    DarkBg    = Color3.fromHex("#0F172A"),
+    Pink1   = Color3.fromHex("#FF69B4"),
+    Pink2   = Color3.fromHex("#FF1493"),
+    White   = Color3.fromHex("#FFFFFF"),
+    SoftPink = Color3.fromHex("#FFB6C1"),
+    DarkBg  = Color3.fromHex("#1A0A14"),
 }
 
-------------------------------------------------------------------------
--- SERVICES
-------------------------------------------------------------------------
-local Players = game:GetService("Players")
-local RS      = game:GetService("RunService")
-local UIS     = game:GetService("UserInputService")
-local WS      = game:GetService("Workspace")
-local Rep     = game:GetService("ReplicatedStorage")
-
-local lp = Players.LocalPlayer
-
-local svc = {
-    Players = Players,
-    Run     = RS,
-    Input   = UIS,
-    WS      = WS,
-    RS      = Rep
-}
-
-------------------------------------------------------------------------
--- GRADIENT TEXT
-------------------------------------------------------------------------
+-- ========================== GRADIENT TEXT ==========================
 local function CreateGradientText(text, color1, color2)
     local result = ""
     local length = #text
@@ -60,19 +33,34 @@ local function CreateGradientText(text, color1, color2)
     return result
 end
 
-------------------------------------------------------------------------
--- POPUP
-------------------------------------------------------------------------
+-- ========================== SERVICES ==========================
+local Players = game:GetService("Players")
+local RS      = game:GetService("RunService")
+local UIS     = game:GetService("UserInputService")
+local WS      = game:GetService("Workspace")
+local Rep     = game:GetService("ReplicatedStorage")
+
+local lp = Players.LocalPlayer
+
+local svc = {
+    Players = Players,
+    Run     = RS,
+    Input   = UIS,
+    WS      = WS,
+    RS      = Rep
+}
+
+-- ========================== POPUP ==========================
 local popupClosed = false
 
 ui:Popup({
-    Title = CreateGradientText("MM2 GOD HUB", Colors.Gold, Colors.LightBlue),
+    Title = CreateGradientText("SAKIWARE", Colors.Pink1, Colors.Pink2),
     Icon = "sparkles",
 
     Content =
-        CreateGradientText("Forsaken Script", Colors.Gold, Colors.LightBlue)
+        CreateGradientText("Forsaken Script", Colors.Pink1, Colors.Pink2)
         .. "<br/>" ..
-        CreateGradientText("Veeronica Loaded", Colors.Blue, Colors.Purple),
+        CreateGradientText("Veeronica Loaded", Colors.Pink1, Colors.Pink2),
 
     Buttons = {
         {
@@ -82,7 +70,7 @@ ui:Popup({
         },
 
         {
-            Title = CreateGradientText("Continue", Colors.Toxic, Colors.Orange),
+            Title = CreateGradientText("Continue", Colors.Pink1, Colors.Pink2),
 
             Callback = function()
                 popupClosed = true
@@ -95,85 +83,263 @@ ui:Popup({
 
 repeat task.wait() until popupClosed
 
-------------------------------------------------------------------------
--- MM2 THEME
-------------------------------------------------------------------------
+-- ========================== DEFAULT THEME ==========================
 ui:AddTheme({
-    Name = "MM2GodTheme",
+    Name = "PinkTheme",
 
-    Accent = Colors.Gold,
+    Accent = Colors.Pink2,
     Background = Colors.DarkBg,
-    Outline = Colors.LightBlue,
-    Text = Colors.LightBlue,
+    Outline = Colors.Pink1,
+    Text = Colors.White,
 
-    Toggle = Color3.fromHex("#EF4444"),
-    ToggleBar = Colors.Gold,
+    Toggle = Colors.Pink1,
+    ToggleBar = Colors.Pink2,
 
-    Checkbox = Color3.fromHex("#EF4444"),
-    CheckboxIcon = Colors.Gold,
+    Checkbox = Colors.Pink1,
+    CheckboxIcon = Colors.Pink2,
 
-    Slider = Color3.fromHex("#EF4444"),
-    SliderThumb = Colors.Gold,
+    Slider = Colors.Pink1,
+    SliderThumb = Colors.Pink2,
 
-    WindowBackground = Color3.fromHex("#1E293B"),
+    WindowBackground = Color3.fromHex("#2D0E1E"),
 })
 
-ui:SetTheme("MM2GodTheme")
-
+ui:SetTheme("PinkTheme")
 ui:SetFont("rbxasset://fonts/families/GothamSSm.json")
 
-------------------------------------------------------------------------
--- WINDOW
-------------------------------------------------------------------------
+-- ========================== WINDOW ==========================
 local Window = ui:CreateWindow({
-    Title = CreateGradientText("MM2 GOD HUB", Colors.Gold, Colors.LightBlue),
-
-    Icon = "skull",
-    Author = "Advanced Edition",
-
-    Folder = "MM2Hub",
-
+    Title = CreateGradientText("SAKIWARE", Colors.Pink1, Colors.Pink2),
+    Icon = "sparkles",
+    Author = "mitsuki",
+    Folder = "SAKIWARE",
     Size = UDim2.fromOffset(520, 480),
-
-    Transparent = true,
-
-    Theme = "MM2GodTheme",
-
+    Transparent = false,
+    Theme = "PinkTheme",
     SideBarWidth = 210,
-
     HideSearchBar = false,
     ScrollBarEnabled = true,
 })
 
 Window:SetToggleKey(Enum.KeyCode.L)
 
-------------------------------------------------------------------------
--- BLUR
-------------------------------------------------------------------------
+Window:EditOpenButton({
+    Title = "SAKIWARE",
+    Icon = "sparkles",
+    CornerRadius = UDim.new(0, 16),
+    StrokeThickness = 0,
+    Color = ColorSequence.new(Colors.Pink1, Colors.Pink2),
+    OnlyMobile = true,
+    Enabled = true,
+    Draggable = true,
+})
+
+-- ========================== BLUR ==========================
 local blur = Instance.new("BlurEffect")
 blur.Size = 14
 blur.Parent = game:GetService("Lighting")
 
-------------------------------------------------------------------------
--- TAGS
-------------------------------------------------------------------------
+-- ========================== TAGS ==========================
 Window:Tag({
     Title = "FPS: 60",
-    Color = Colors.Toxic
+    Color = Colors.Pink1
 })
 
 Window:Tag({
     Title = "Ping: 32ms",
-    Color = Colors.Gold
+    Color = Colors.Pink2
 })
 
-------------------------------------------------------------------------
-------------------------------------------------------------------------
--- TAB: VEERONICA
-------------------------------------------------------------------------
-------------------------------------------------------------------------
-local tabVeeronica = Window:Tab({ Title = "Veeronica",   Icon = "zap"           })
-local sec_022      = tabVeeronica:Section({ Title = "Auto Trick", Opened = true })
+-- ========================== COLOR DROPDOWN (70+ COLORS) ==========================
+local ColorSchemes = {
+    -- REDS
+    { Name = "🔴 Crimson", Primary = Color3.fromHex("#DC143C"), Secondary = Color3.fromHex("#8B0000"), Background = Color3.fromHex("#1A0508"), WindowBg = Color3.fromHex("#2D0A10") },
+    { Name = "🍎 Apple Red", Primary = Color3.fromHex("#FF3B30"), Secondary = Color3.fromHex("#CC1100"), Background = Color3.fromHex("#1A0806"), WindowBg = Color3.fromHex("#2D100C") },
+    { Name = "🌹 Rose Red", Primary = Color3.fromHex("#FF1A66"), Secondary = Color3.fromHex("#CC0044"), Background = Color3.fromHex("#1A0510"), WindowBg = Color3.fromHex("#2D0A1A") },
+    { Name = "🍒 Cherry", Primary = Color3.fromHex("#DE3163"), Secondary = Color3.fromHex("#9B1D3F"), Background = Color3.fromHex("#1A0610"), WindowBg = Color3.fromHex("#2D0D1A") },
+    { Name = "🔥 Fire Red", Primary = Color3.fromHex("#FF4500"), Secondary = Color3.fromHex("#CC3300"), Background = Color3.fromHex("#1A0A05"), WindowBg = Color3.fromHex("#2D120A") },
+    
+    -- ORANGES
+    { Name = "🍊 Orange", Primary = Color3.fromHex("#FF9500"), Secondary = Color3.fromHex("#CC7000"), Background = Color3.fromHex("#1A0F05"), WindowBg = Color3.fromHex("#2D1A0A") },
+    { Name = "🍑 Peach", Primary = Color3.fromHex("#FFDAB9"), Secondary = Color3.fromHex("#FFB07C"), Background = Color3.fromHex("#1A1510"), WindowBg = Color3.fromHex("#2D2015") },
+    { Name = "🎃 Pumpkin", Primary = Color3.fromHex("#FF7518"), Secondary = Color3.fromHex("#CC5500"), Background = Color3.fromHex("#1A0F08"), WindowBg = Color3.fromHex("#2D1A10") },
+    { Name = "🧡 Coral", Primary = Color3.fromHex("#FF7F50"), Secondary = Color3.fromHex("#CC5533"), Background = Color3.fromHex("#1A100A"), WindowBg = Color3.fromHex("#2D1A12") },
+    { Name = "✨ Amber", Primary = Color3.fromHex("#FFBF00"), Secondary = Color3.fromHex("#CC9900"), Background = Color3.fromHex("#1A1405"), WindowBg = Color3.fromHex("#2D200A") },
+    
+    -- YELLOWS
+    { Name = "⭐ Gold", Primary = Color3.fromHex("#FFD700"), Secondary = Color3.fromHex("#CCA800"), Background = Color3.fromHex("#1A1505"), WindowBg = Color3.fromHex("#2D240A") },
+    { Name = "🍋 Lemon", Primary = Color3.fromHex("#FFF44F"), Secondary = Color3.fromHex("#CCCC00"), Background = Color3.fromHex("#1A1A05"), WindowBg = Color3.fromHex("#2D2D0A") },
+    { Name = "🐝 Honey", Primary = Color3.fromHex("#FFC72C"), Secondary = Color3.fromHex("#CCA000"), Background = Color3.fromHex("#1A1405"), WindowBg = Color3.fromHex("#2D220A") },
+    { Name = "🌻 Sunflower", Primary = Color3.fromHex("#FFDA00"), Secondary = Color3.fromHex("#CCAE00"), Background = Color3.fromHex("#1A1605"), WindowBg = Color3.fromHex("#2D260A") },
+    { Name = "🍯 Mustard", Primary = Color3.fromHex("#E1AD01"), Secondary = Color3.fromHex("#B8860B"), Background = Color3.fromHex("#1A1205"), WindowBg = Color3.fromHex("#2D1E0A") },
+    
+    -- GREENS
+    { Name = "🍀 Lime", Primary = Color3.fromHex("#32CD32"), Secondary = Color3.fromHex("#228B22"), Background = Color3.fromHex("#051A05"), WindowBg = Color3.fromHex("#0A2D0A") },
+    { Name = "🌿 Mint", Primary = Color3.fromHex("#98FB98"), Secondary = Color3.fromHex("#3CB371"), Background = Color3.fromHex("#0A1A0A"), WindowBg = Color3.fromHex("#102D10") },
+    { Name = "🍃 Forest", Primary = Color3.fromHex("#228B22"), Secondary = Color3.fromHex("#006400"), Background = Color3.fromHex("#051005"), WindowBg = Color3.fromHex("#0A1A0A") },
+    { Name = "🐍 Emerald", Primary = Color3.fromHex("#50C878"), Secondary = Color3.fromHex("#2E8B57"), Background = Color3.fromHex("#051A10"), WindowBg = Color3.fromHex("#0A2D1A") },
+    { Name = "🧪 Neon Green", Primary = Color3.fromHex("#39FF14"), Secondary = Color3.fromHex("#00CC00"), Background = Color3.fromHex("#0A1A00"), WindowBg = Color3.fromHex("#102D00") },
+    { Name = "🥑 Avocado", Primary = Color3.fromHex("#568203"), Secondary = Color3.fromHex("#3D5C00"), Background = Color3.fromHex("#0A1005"), WindowBg = Color3.fromHex("#14200A") },
+    { Name = "🌊 Seafoam", Primary = Color3.fromHex("#9FE2BF"), Secondary = Color3.fromHex("#70C99E"), Background = Color3.fromHex("#0A1A14"), WindowBg = Color3.fromHex("#102D22") },
+    
+    -- BLUES
+    { Name = "💙 Ocean", Primary = Color3.fromHex("#1E90FF"), Secondary = Color3.fromHex("#0055CC"), Background = Color3.fromHex("#0A0F1A"), WindowBg = Color3.fromHex("#101A2D") },
+    { Name = "🌌 Navy", Primary = Color3.fromHex("#000080"), Secondary = Color3.fromHex("#000060"), Background = Color3.fromHex("#050510"), WindowBg = Color3.fromHex("#0A0A1A") },
+    { Name = "💎 Sapphire", Primary = Color3.fromHex("#0F52BA"), Secondary = Color3.fromHex("#003399"), Background = Color3.fromHex("#050A1A"), WindowBg = Color3.fromHex("#0A102D") },
+    { Name = "🌀 Cyan", Primary = Color3.fromHex("#00FFFF"), Secondary = Color3.fromHex("#00CCCC"), Background = Color3.fromHex("#001A1A"), WindowBg = Color3.fromHex("#002D2D") },
+    { Name = "⛄ Ice Blue", Primary = Color3.fromHex("#ADD8E6"), Secondary = Color3.fromHex("#87CEEB"), Background = Color3.fromHex("#0A141A"), WindowBg = Color3.fromHex("#10202D") },
+    { Name = "🔵 Royal Blue", Primary = Color3.fromHex("#4169E1"), Secondary = Color3.fromHex("#1E3A8A"), Background = Color3.fromHex("#0A0D1A"), WindowBg = Color3.fromHex("#10152D") },
+    { Name = "🌊 Teal", Primary = Color3.fromHex("#008080"), Secondary = Color3.fromHex("#006060"), Background = Color3.fromHex("#001010"), WindowBg = Color3.fromHex("#001A1A") },
+    { Name = "💠 Periwinkle", Primary = Color3.fromHex("#CCCCFF"), Secondary = Color3.fromHex("#9999CC"), Background = Color3.fromHex("#14141A"), WindowBg = Color3.fromHex("#22222D") },
+    { Name = "🦋 Baby Blue", Primary = Color3.fromHex("#89CFF0"), Secondary = Color3.fromHex("#5BA3D9"), Background = Color3.fromHex("#0A141A"), WindowBg = Color3.fromHex("#10202D") },
+    
+    -- PURPLES
+    { Name = "🍇 Purple", Primary = Color3.fromHex("#9B30FF"), Secondary = Color3.fromHex("#6A0DAD"), Background = Color3.fromHex("#140A1A"), WindowBg = Color3.fromHex("#20102D") },
+    { Name = "🔮 Lavender", Primary = Color3.fromHex("#E6E6FA"), Secondary = Color3.fromHex("#C3B1E1"), Background = Color3.fromHex("#15141A"), WindowBg = Color3.fromHex("#22222D") },
+    { Name = "👾 Violet", Primary = Color3.fromHex("#8F00FF"), Secondary = Color3.fromHex("#5C00CC"), Background = Color3.fromHex("#10001A"), WindowBg = Color3.fromHex("#1A002D") },
+    { Name = "✨ Lilac", Primary = Color3.fromHex("#C8A2C8"), Secondary = Color3.fromHex("#A578A5"), Background = Color3.fromHex("#1A151A"), WindowBg = Color3.fromHex("#2D222D") },
+    { Name = "🪻 Plum", Primary = Color3.fromHex("#8E4585"), Secondary = Color3.fromHex("#5E2B58"), Background = Color3.fromHex("#140A12"), WindowBg = Color3.fromHex("#20101D") },
+    { Name = "💜 Magenta", Primary = Color3.fromHex("#FF00FF"), Secondary = Color3.fromHex("#CC00CC"), Background = Color3.fromHex("#1A001A"), WindowBg = Color3.fromHex("#2D002D") },
+    { Name = "🍬 Grape", Primary = Color3.fromHex("#6F2DA8"), Secondary = Color3.fromHex("#4B1E7A"), Background = Color3.fromHex("#100A18"), WindowBg = Color3.fromHex("#1A1028") },
+    
+    -- PINKS (Soft & Cute)
+    { Name = "🩷 Soft Pink", Primary = Color3.fromHex("#FFB6C1"), Secondary = Color3.fromHex("#FF8DA1"), Background = Color3.fromHex("#1A1215"), WindowBg = Color3.fromHex("#2D1D22") },
+    { Name = "🎀 Blush", Primary = Color3.fromHex("#FFC0CB"), Secondary = Color3.fromHex("#FF9EAF"), Background = Color3.fromHex("#1A1415"), WindowBg = Color3.fromHex("#2D2022") },
+    { Name = "🌸 Sakura", Primary = Color3.fromHex("#FFA6C9"), Secondary = Color3.fromHex("#FF7DA8"), Background = Color3.fromHex("#1A1218"), WindowBg = Color3.fromHex("#2D1D26") },
+    { Name = "🍬 Cotton Candy", Primary = Color3.fromHex("#FFB3D9"), Secondary = Color3.fromHex("#FF8CC6"), Background = Color3.fromHex("#1A1418"), WindowBg = Color3.fromHex("#2D2026") },
+    { Name = "💗 Baby Pink", Primary = Color3.fromHex("#F4C2C2"), Secondary = Color3.fromHex("#E8A2A2"), Background = Color3.fromHex("#1A1515"), WindowBg = Color3.fromHex("#2D2222") },
+    { Name = "🎀 Rose Gold", Primary = Color3.fromHex("#E8B4B8"), Secondary = Color3.fromHex("#C88A8E"), Background = Color3.fromHex("#1A1415"), WindowBg = Color3.fromHex("#2D1F20") },
+    { Name = "💖 Neon Pink", Primary = Color3.fromHex("#FF1493"), Secondary = Color3.fromHex("#DB107A"), Background = Color3.fromHex("#1A0512"), WindowBg = Color3.fromHex("#2D0A1F") },
+    
+    -- PASTELS
+    { Name = "🍦 Pastel Yellow", Primary = Color3.fromHex("#FFFACD"), Secondary = Color3.fromHex("#F5E6B8"), Background = Color3.fromHex("#1A1A14"), WindowBg = Color3.fromHex("#2D2D20") },
+    { Name = "🍬 Pastel Mint", Primary = Color3.fromHex("#C1E1C1"), Secondary = Color3.fromHex("#A3C9A3"), Background = Color3.fromHex("#121A12"), WindowBg = Color3.fromHex("#1E2D1E") },
+    { Name = "🩵 Pastel Blue", Primary = Color3.fromHex("#AEC6CF"), Secondary = Color3.fromHex("#8FB3C0"), Background = Color3.fromHex("#0F141A"), WindowBg = Color3.fromHex("#18222D") },
+    { Name = "🍇 Pastel Purple", Primary = Color3.fromHex("#D1B3E8"), Secondary = Color3.fromHex("#B893D6"), Background = Color3.fromHex("#15121A"), WindowBg = Color3.fromHex("#221E2D") },
+    { Name = "🍑 Pastel Peach", Primary = Color3.fromHex("#FFD1B3"), Secondary = Color3.fromHex("#FFB88C"), Background = Color3.fromHex("#1A1410"), WindowBg = Color3.fromHex("#2D221C") },
+    { Name = "🌙 Pastel Lavender", Primary = Color3.fromHex("#E6D5F5"), Secondary = Color3.fromHex("#D1B8E8"), Background = Color3.fromHex("#16141A"), WindowBg = Color3.fromHex("#24202D") },
+    
+    -- NEONS
+    { Name = "⚡ Neon Yellow", Primary = Color3.fromHex("#FFFF00"), Secondary = Color3.fromHex("#CCCC00"), Background = Color3.fromHex("#1A1A00"), WindowBg = Color3.fromHex("#2D2D00") },
+    { Name = "🔋 Neon Orange", Primary = Color3.fromHex("#FF6600"), Secondary = Color3.fromHex("#CC5500"), Background = Color3.fromHex("#1A0A00"), WindowBg = Color3.fromHex("#2D1200") },
+    { Name = "💚 Neon Lime", Primary = Color3.fromHex("#CCFF00"), Secondary = Color3.fromHex("#99CC00"), Background = Color3.fromHex("#141A00"), WindowBg = Color3.fromHex("#222D00") },
+    { Name = "💙 Neon Blue", Primary = Color3.fromHex("#00CCFF"), Secondary = Color3.fromHex("#0099CC"), Background = Color3.fromHex("#00141A"), WindowBg = Color3.fromHex("#00222D") },
+    { Name = "💜 Neon Purple", Primary = Color3.fromHex("#BF00FF"), Secondary = Color3.fromHex("#9900CC"), Background = Color3.fromHex("#14001A"), WindowBg = Color3.fromHex("#22002D") },
+    
+    -- DARK / MOODY
+    { Name = "🌑 Midnight", Primary = Color3.fromHex("#2B2B2B"), Secondary = Color3.fromHex("#1A1A1A"), Background = Color3.fromHex("#0A0A0A"), WindowBg = Color3.fromHex("#141414") },
+    { Name = "🖤 Charcoal", Primary = Color3.fromHex("#36454F"), Secondary = Color3.fromHex("#232E36"), Background = Color3.fromHex("#0A0F12"), WindowBg = Color3.fromHex("#121A1F") },
+    { Name = "🍷 Wine", Primary = Color3.fromHex("#722F37"), Secondary = Color3.fromHex("#4A1E24"), Background = Color3.fromHex("#140A0C"), WindowBg = Color3.fromHex("#221216") },
+    { Name = "🌙 Dark Plum", Primary = Color3.fromHex("#3C1053"), Secondary = Color3.fromHex("#2A0A3A"), Background = Color3.fromHex("#0E0515"), WindowBg = Color3.fromHex("#180A24") },
+    { Name = "🪸 Dark Teal", Primary = Color3.fromHex("#004D4D"), Secondary = Color3.fromHex("#003333"), Background = Color3.fromHex("#001010"), WindowBg = Color3.fromHex("#001A1A") },
+    
+    -- SPECIAL / UNIQUE
+    { Name = "🌈 Rainbow", Primary = Color3.fromHex("#FF0000"), Secondary = Color3.fromHex("#00FF00"), Background = Color3.fromHex("#1A1A1A"), WindowBg = Color3.fromHex("#2D2D2D") },
+    { Name = "✨ Gold", Primary = Color3.fromHex("#FFD700"), Secondary = Color3.fromHex("#DAA520"), Background = Color3.fromHex("#1A1A00"), WindowBg = Color3.fromHex("#2D2D00") },
+    { Name = "💎 Silver", Primary = Color3.fromHex("#C0C0C0"), Secondary = Color3.fromHex("#A9A9A9"), Background = Color3.fromHex("#141414"), WindowBg = Color3.fromHex("#202020") },
+    { Name = "🌊 Aqua", Primary = Color3.fromHex("#00FFFF"), Secondary = Color3.fromHex("#00CED1"), Background = Color3.fromHex("#001A1A"), WindowBg = Color3.fromHex("#002D2D") },
+    { Name = "🍂 Brown", Primary = Color3.fromHex("#A0522D"), Secondary = Color3.fromHex("#8B4513"), Background = Color3.fromHex("#1A0F08"), WindowBg = Color3.fromHex("#2D1A10") },
+    { Name = "🌿 Olive", Primary = Color3.fromHex("#808000"), Secondary = Color3.fromHex("#5A5A00"), Background = Color3.fromHex("#141400"), WindowBg = Color3.fromHex("#222200") },
+    { Name = "🦩 Flamingo", Primary = Color3.fromHex("#FC6C85"), Secondary = Color3.fromHex("#E3516B"), Background = Color3.fromHex("#1A1012"), WindowBg = Color3.fromHex("#2D1A1E") },
+    { Name = "🐚 Seashell", Primary = Color3.fromHex("#FFF5EE"), Secondary = Color3.fromHex("#F5E6DC"), Background = Color3.fromHex("#1A1815"), WindowBg = Color3.fromHex("#2D2A25") },
+}
+
+-- Function to apply a color scheme
+local function ApplyColorScheme(scheme)
+    Colors.Pink1 = scheme.Primary
+    Colors.Pink2 = scheme.Secondary
+    Colors.DarkBg = scheme.Background
+    
+    ui:AddTheme({
+        Name = "PinkTheme",
+        Accent = Colors.Pink2,
+        Background = Colors.DarkBg,
+        Outline = Colors.Pink1,
+        Text = Colors.White,
+        Toggle = Colors.Pink1,
+        ToggleBar = Colors.Pink2,
+        Checkbox = Colors.Pink1,
+        CheckboxIcon = Colors.Pink2,
+        Slider = Colors.Pink1,
+        SliderThumb = Colors.Pink2,
+        WindowBackground = scheme.WindowBg,
+    })
+    
+    ui:SetTheme("PinkTheme")
+    
+    pcall(function()
+        Window:EditOpenButton({
+            Title = "SAKIWARE",
+            Icon = "sparkles",
+            CornerRadius = UDim.new(0, 16),
+            StrokeThickness = 0,
+            Color = ColorSequence.new(Colors.Pink1, Colors.Pink2),
+            OnlyMobile = true,
+            Enabled = true,
+            Draggable = true,
+        })
+    end)
+end
+
+-- ========================== TAB: VEERONICA ==========================
+local tabVeeronica = Window:Tab({ Title = CreateGradientText("Veeronica", Colors.Pink1, Colors.Pink2), Icon = "zap" })
+
+-- ========================== COLOR THEMES SECTION ==========================
+local sec_colors = tabVeeronica:Section({ Title = CreateGradientText("🎨 Color Themes", Colors.Pink1, Colors.Pink2), Opened = true })
+
+-- Create dropdown options with colored preview dots
+local colorOptions = {}
+for _, scheme in ipairs(ColorSchemes) do
+    table.insert(colorOptions, string.format('<font color="rgb(%d,%d,%d)">●</font> %s', 
+        math.floor(scheme.Primary.R * 255),
+        math.floor(scheme.Primary.G * 255),
+        math.floor(scheme.Primary.B * 255),
+        scheme.Name
+    ))
+end
+
+local colorDropdown = sec_colors:Dropdown({
+    Title = CreateGradientText("Select Any Color", Colors.Pink1, Colors.Pink2),
+    Values = colorOptions,
+    Default = 1,
+    Callback = function(selected, index)
+        for i, scheme in ipairs(ColorSchemes) do
+            local previewText = string.format('<font color="rgb(%d,%d,%d)">●</font> %s', 
+                math.floor(scheme.Primary.R * 255),
+                math.floor(scheme.Primary.G * 255),
+                math.floor(scheme.Primary.B * 255),
+                scheme.Name
+            )
+            if previewText == selected then
+                ApplyColorScheme(scheme)
+                break
+            end
+        end
+    end
+})
+
+-- Random color button
+sec_colors:Button({
+    Title = CreateGradientText("🎲 Random Color", Colors.Pink1, Colors.Pink2),
+    Callback = function()
+        local randomIndex = math.random(1, #ColorSchemes)
+        local randomScheme = ColorSchemes[randomIndex]
+        ApplyColorScheme(randomScheme)
+        
+        pcall(function()
+            local previewText = string.format('<font color="rgb(%d,%d,%d)">●</font> %s', 
+                math.floor(randomScheme.Primary.R * 255),
+                math.floor(randomScheme.Primary.G * 255),
+                math.floor(randomScheme.Primary.B * 255),
+                randomScheme.Name
+            )
+            colorDropdown:SetValue(previewText)
+        end)
+    end
+})
+
+-- ========================== AUTO TRICK SECTION ==========================
+local sec_022 = tabVeeronica:Section({ Title = CreateGradientText("Auto Trick", Colors.Pink1, Colors.Pink2), Opened = true })
 
 do
     local atEnabled=false; local atActiveMonitors={}; local atDescendantAddedConn=nil
@@ -209,17 +375,16 @@ do
         for _,cleanup in pairs(atActiveMonitors) do if type(cleanup)=="function" then pcall(cleanup) end end
         atActiveMonitors={}
     end
-    sec_022:Toggle({ Title="Auto Trick", Flag="veeeAutoTrick", Default=false, Callback=function(on)
+    sec_022:Toggle({ Title=CreateGradientText("Auto Trick", Colors.Pink1, Colors.Pink2), Flag="veeeAutoTrick", Default=false, Callback=function(on)
         atEnabled=on
         if on then if not atBehaviorFolder then local ok,f=pcall(atGetBehaviorFolder); if ok and f then atBehaviorFolder=f end end; atStartManager()
         else atStopManager() end
     end, Type="Checkbox"})
 end
 
-------------------------------------------------------------------------
--- SK8 Control
-------------------------------------------------------------------------
-local sec_023=tabVeeronica:Section({ Title="SK8 Control", Opened=true })
+-- ========================== SK8 CONTROL SECTION ==========================
+local sec_023 = tabVeeronica:Section({ Title=CreateGradientText("SK8 Control", Colors.Pink1, Colors.Pink2), Opened=true })
+
 do
     local sk8_camera=svc.WS.CurrentCamera; local sk8_shiftlockEnabled=false; local sk8_shiftConn=nil
     local function sk8_setShiftlock(state)
@@ -268,13 +433,12 @@ do
         else if sk8_controlActive then sk8_stopOverride() end end
     end)
     lp.CharacterAdded:Connect(function() if sk8_shiftConn then sk8_shiftConn:Disconnect(); sk8_shiftConn=nil end; sk8_savedHumState={} end)
-    sec_023:Toggle({ Title="Enable SK8 Control", Default=sk8_controlEnabled, Flag="sk8ControlEnabled", Callback=function(on) sk8_controlEnabled=on; if not on and sk8_controlActive then sk8_stopOverride() end end, Type="Checkbox"})
+    sec_023:Toggle({ Title=CreateGradientText("Enable SK8 Control", Colors.Pink1, Colors.Pink2), Default=sk8_controlEnabled, Flag="sk8ControlEnabled", Callback=function(on) sk8_controlEnabled=on; if not on and sk8_controlActive then sk8_stopOverride() end end, Type="Checkbox"})
 end
 
-------------------------------------------------------------------------
--- Fast Spray
-------------------------------------------------------------------------
-local sec_vee_spray=tabVeeronica:Section({ Title="Fast Spray", Opened=true })
+-- ========================== FAST SPRAY SECTION ==========================
+local sec_vee_spray = tabVeeronica:Section({ Title=CreateGradientText("Fast Spray", Colors.Pink1, Colors.Pink2), Opened=true })
+
 do
     local SPRAY_ANIM_ID="96618767275101"; local vee_fastSpray=false; local sprayPhase=0; local sprayBaseCF=nil
     local function isSprayPainting()
@@ -294,5 +458,5 @@ do
         hrp.CFrame=sprayBaseCF+(sprayBaseCF.LookVector*(-offset))
     end)
     lp.CharacterAdded:Connect(function() sprayPhase=0; sprayBaseCF=nil end)
-    sec_vee_spray:Toggle({ Title="Enable Fast Spray", Type="Checkbox", Flag="veeeFastSpray", Default=vee_fastSpray, Callback=function(on) vee_fastSpray=on; if not on then sprayPhase=0; sprayBaseCF=nil end end })
+    sec_vee_spray:Toggle({ Title=CreateGradientText("Enable Fast Spray", Colors.Pink1, Colors.Pink2), Type="Checkbox", Flag="veeeFastSpray", Default=vee_fastSpray, Callback=function(on) vee_fastSpray=on; if not on then sprayPhase=0; sprayBaseCF=nil end end })
 end
