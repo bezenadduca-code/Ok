@@ -40,32 +40,73 @@ local ui = loadstring(game:HttpGet(
     "https://github.com/Footagesus/WindUI/releases/latest/download/main.lua"
 ))()
 
+local Colors = {
+    Gold = Color3.fromHex("#FFD700"),
+    LightBlue = Color3.fromHex("#7DD3FC"),
+    DarkBg = Color3.fromHex("#0F172A"),
+}
+
+ui:AddTheme({
+    Name = "MM2GodTheme",
+    Accent = Colors.Gold,
+    Background = Colors.DarkBg,
+    Outline = Colors.LightBlue,
+    Text = Colors.LightBlue,
+
+    Toggle = Color3.fromHex("#EF4444"),
+    ToggleBar = Colors.Gold,
+
+    Checkbox = Color3.fromHex("#EF4444"),
+    CheckboxIcon = Colors.Gold,
+
+    Slider = Color3.fromHex("#EF4444"),
+    SliderThumb = Colors.Gold,
+
+    WindowBackground = Color3.fromHex("#1E293B"),
+})
+
+ui:SetTheme("MM2GodTheme")
+
 local win = ui:CreateWindow({
-    Title          = "SAKIWARE",
-    Icon           = "sparkles",
-    Author         = "mitsuki",
-    Folder         = "SAKIWARE",
-    Size           = UDim2.fromOffset(350, 300),
-    Transparent    = false,
-    Theme          = "Dark",
-    Resizable      = false,
-    SideBarWidth   = 150,
-    HideSearchBar  = true,
-    ScrollBarEnabled = false,
+    Title = "SAKIWARE",
+    Icon = "sparkles",
+    Author = "mitsuki",
+    Folder = "SAKIWARE",
+
+    Size = UDim2.fromOffset(520, 480),
+
+    MinSize = Vector2.new(480, 380),
+    MaxSize = Vector2.new(900, 650),
+
+    Transparent = true,
+    Theme = "MM2GodTheme",
+
+    Resizable = true,
+
+    SideBarWidth = 210,
+
+    HideSearchBar = false,
+    ScrollBarEnabled = true,
+
+    BackgroundImageTransparency = 0.45,
+    Background = "rbxassetid://102034167785966",
 })
 
 local ConfigManager = win.ConfigManager
 local sakiConfig = ConfigManager:CreateConfig("sakiware")
 
 win:SetToggleKey(Enum.KeyCode.L)
-ui:SetFont("rbxasset://fonts/families/AccanthisADFStd.json")
+ui:SetFont("rbxasset://fonts/families/GothamSSm.json")
 
 win:EditOpenButton({
     Title          = "SAKIWARE",
     Icon           = "sparkles",
     CornerRadius   = UDim.new(0, 16),
     StrokeThickness = 0,
-    Color = ColorSequence.new(Color3.fromHex("000000"), Color3.fromHex("000000")),
+   Color = ColorSequence.new(
+    Color3.fromHex("#FFD700"),
+    Color3.fromHex("#7DD3FC")
+),
     OnlyMobile = true,
     Enabled    = true,
     Draggable  = true,
