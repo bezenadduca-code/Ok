@@ -104,6 +104,8 @@ local Window = WindUI:CreateWindow({
     Theme = "Dark",
 })
 
+Window:SetToggleKey(Enum.KeyCode.L)
+
 -- ============================== JANE DOE CRYSTAL SILENT AIM ==============================
 
 local tabJaneDoe = Window:Tab({ Title = "Jane Doe", Icon = "gem", IconColor = Color3.fromHex("#7DD3FC"), ShowTabTitle = false })
