@@ -104,7 +104,7 @@ local Window = WindUI:CreateWindow({
     Theme = "Dark",
 })
 
-Window:SetToggleKey(Enum.KeyCode.L)
+Window:SetToggleKey(Enum.KeyCode.F)
 
 -- ============================== JANE DOE CRYSTAL SILENT AIM ==============================
 
