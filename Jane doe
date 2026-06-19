@@ -11,12 +11,13 @@ local LocalPlayer = RobloxServices.Players.LocalPlayer
 local CurrentCamera = RobloxServices.Workspace.CurrentCamera
 
 -- ──────────────────────────────────────────────
---  SHARED RF DISPATCHER SYSTEM
+--  FIXED RF DISPATCHER - PRESERVES SILENT AIM
 -- ──────────────────────────────────────────────
 local rfDispatch = {
     hooks = {},
     installed = false,
-    originalCallback = nil
+    originalCallback = nil,
+    activeRemote = nil
 }
 
 function rfDispatch:register(id, callback)
@@ -30,6 +31,9 @@ end
 function rfDispatch:install(remoteFunction)
     if self.installed then return end
     
+    self.activeRemote = remoteFunction
+    
+    -- Store original callback
     if typeof(getcallbackvalue) == "function" then
         self.originalCallback = getcallbackvalue(remoteFunction, "OnClientInvoke")
     else
@@ -37,13 +41,28 @@ function rfDispatch:install(remoteFunction)
     end
 
     remoteFunction.OnClientInvoke = function(requestName, ...)
-        for id, hookFunc in pairs(self.hooks) do
-            local success, result = pcall(hookFunc, requestName, ...)
-            if success and result ~= nil then
-                return result
+        -- ONLY intercept silent aim requests, pass everything else through
+        local shouldIntercept = false
+        local interceptRequests = {"GetMousePosition", "GetCameraCF"}
+        
+        for _, req in ipairs(interceptRequests) do
+            if requestName == req then
+                shouldIntercept = true
+                break
             end
         end
         
+        if shouldIntercept then
+            -- Try our hooks first
+            for id, hookFunc in pairs(self.hooks) do
+                local success, result = pcall(hookFunc, requestName, ...)
+                if success and result ~= nil then
+                    return result
+                end
+            end
+        end
+        
+        -- ALWAYS forward to original callback for everything else
         if self.originalCallback then
             local ok, res = pcall(self.originalCallback, requestName, ...)
             if ok then return res end
@@ -60,6 +79,7 @@ function rfDispatch:uninstall(remoteFunction)
     self.hooks = {}
     self.originalCallback = nil
     self.installed = false
+    self.activeRemote = nil
 end
 
 -- ──────────────────────────────────────────────
@@ -117,6 +137,7 @@ do
     local jd_AXE_LOCK_DURATION = 1.7     
     local jd_axeLocked     = false
     local jd_killerMotionData  = {}
+    local jd_holdActive    = false
 
     -- Get killer velocity for prediction
     local function jd_getKillerVelocity(hrp)
@@ -153,10 +174,10 @@ do
         return ok and result or nil
     end
 
-    -- Hold crystal (charge)
+    -- Hold crystal (charge) - SAFE VERSION
     local function jd_holdCrystal()
         local ok = pcall(function()
-            if not jd_RemoteEvent then return end
+            if not jd_RemoteEvent or not jd_enabled then return end
             local b = buffer.create(8)
             buffer.writeu32(b, 0, 2)
             buffer.writef32(b, 4, RobloxServices.Workspace.DistributedGameTime)
@@ -184,7 +205,7 @@ do
             local deadline = tick() + jd_AXE_LOCK_DURATION
             local conn; conn = jd_Run.RenderStepped:Connect(function()
                 local connOk = pcall(function()
-                    if tick() >= deadline or not jd_axeEnabled then
+                    if tick() >= deadline or not jd_axeEnabled or jd_unloaded then
                         conn:Disconnect()
                         pcall(function() hum.AutoRotate = savedAutoRotate end)
                         jd_axeLocked = false
@@ -214,7 +235,7 @@ do
         end
     end
 
-    -- Build camera CFrame for silent aim (calculates angle to hit target)
+    -- Build camera CFrame for silent aim
     local function jd_buildCamCF(myHRP, killerHRP, v0, g)
         local ok, result = pcall(function()
             local hum=myHRP.Parent and myHRP.Parent:FindFirstChildOfClass("Humanoid")
@@ -247,11 +268,15 @@ do
         return jd_lp.Character
     end
 
-    -- Apply silent aim patch to RemoteFunction
+    -- Apply silent aim patch - THIS MAKES SILENT AIM WORK
     local function jd_applyPatch(actor)
         local ok = pcall(function()
             if jd_patched or not actor or not jd_NetworkRF then return end
+            
+            -- Install the dispatcher - this hooks RemoteFunction.OnClientInvoke
             rfDispatch:install(jd_NetworkRF)
+            
+            -- Register our silent aim hooks
             rfDispatch:register("jd", function(reqName, ...)
                 local hookOk, result = pcall(function()
                     if not (jd_enabled and jd_aimbotOn) then return nil end
@@ -262,13 +287,14 @@ do
                     local killerHRP = killer and killer:FindFirstChild("HumanoidRootPart")
                     if not killerHRP then return nil end
                     
-                    -- Silent aim for GetMousePosition
+                    -- SILENT AIM: Override GetMousePosition
                     if reqName == "GetMousePosition" then
                         local vel = jd_getKillerVelocity(killerHRP)
-                        return killerHRP.Position + vel * jd_PREDICTION + Vector3.new(0, jd_AIM_OFFSET, 0)
+                        local pos = killerHRP.Position + vel * jd_PREDICTION + Vector3.new(0, jd_AIM_OFFSET, 0)
+                        return pos
                     end
                     
-                    -- Camera CFrame override
+                    -- SILENT AIM: Override GetCameraCF
                     if reqName == "GetCameraCF" then
                         local cf = jd_buildCamCF(myHRP, killerHRP, 250, 40)
                         if cf then return cf end
@@ -280,7 +306,7 @@ do
             jd_patched = true
         end)
         if not ok then
-            warn("Failed to apply patch")
+            warn("Failed to apply patch: " .. tostring(ok))
         end
     end
     
@@ -289,6 +315,10 @@ do
         local ok = pcall(function()
             if not jd_patched then return end
             rfDispatch:unregister("jd")
+            -- Only uninstall if no other hooks remain
+            if next(rfDispatch.hooks) == nil then
+                rfDispatch:uninstall(jd_NetworkRF)
+            end
             jd_patched = false
         end)
         if not ok then
@@ -296,57 +326,47 @@ do
         end
     end
 
-    -- Auto-hold crystal when firing (extends duration)
-    local jd_holdActive = false
+    -- SAFE: Monitor crystal and axe events WITHOUT breaking other scripts
     task.spawn(function()
-        local ok, re = pcall(function()
-            return RobloxServices.ReplicatedStorage:WaitForChild("Modules",5):WaitForChild("Network",5):WaitForChild("Network",5):WaitForChild("RemoteEvent",5)
-        end)
-        if not ok or not re then 
-            warn("Failed to find RemoteEvent for crystal hold")
-            return 
+        while not jd_RemoteEvent do
+            task.wait(0.5)
         end
         
-        local oldNC
-        pcall(function()
-            oldNC = hookmetamethod(game, "__namecall", function(self, ...)
-                local method = getnamecallmethod()
-                local args = {...}
-                if method == "FireServer" and self == re then
-                    local eventName = tostring(args[1])
-                    
-                    -- Auto-hold crystal when used
-                    if jd_enabled and eventName == (jd_lp.Name .. "CrystalInput") then
-                        if not jd_holdActive then
-                            jd_holdActive = true
-                            task.spawn(function()
-                                local holdOk = pcall(function()
-                                    local deadline = tick() + jd_HOLD_DURATION
-                                    while tick() < deadline and jd_enabled and not jd_unloaded do
-                                        jd_holdCrystal()
-                                        task.wait(1/30)
-                                    end
-                                    jd_holdActive = false
-                                end)
-                                if not holdOk then
-                                    warn("Crystal hold loop failed")
-                                    jd_holdActive = false
-                                end
-                            end)
+        -- Use OnClientEvent instead of __namecall hook
+        local connection
+        connection = jd_RemoteEvent.OnClientEvent:Connect(function(...)
+            local args = {...}
+            if not jd_enabled then return end
+            
+            -- Crystal hold
+            if args[1] == (jd_lp.Name .. "CrystalInput") and not jd_holdActive then
+                jd_holdActive = true
+                task.spawn(function()
+                    local holdOk = pcall(function()
+                        local deadline = tick() + jd_HOLD_DURATION
+                        while tick() < deadline and jd_enabled and not jd_unloaded do
+                            jd_holdCrystal()
+                            task.wait(1/30)
                         end
+                        jd_holdActive = false
+                    end)
+                    if not holdOk then
+                        jd_holdActive = false
                     end
-                    
-                    -- Axe lock-on when axe is thrown
-                    if jd_axeEnabled and eventName == "UseActorAbility" and args[2] and args[2][1] then
-                        local ok2, bs = pcall(function() return buffer.tostring(args[2][1]) end)
-                        if ok2 and bs and bs:find("Axe") then
-                            task.spawn(jd_axeDoLock)
-                        end
-                    end
+                end)
+            end
+            
+            -- Axe lock-on
+            if jd_axeEnabled and args[1] == "UseActorAbility" and args[2] and args[2][1] then
+                local ok2, bs = pcall(function() return buffer.tostring(args[2][1]) end)
+                if ok2 and bs and bs:find("Axe") then
+                    task.spawn(jd_axeDoLock)
                 end
-                return oldNC(self, ...)
-            end)
+            end
         end)
+        
+        -- Store for cleanup
+        getgenv()._jdConnection = connection
     end)
 
     -- Monitor character changes to re-apply patch
@@ -356,9 +376,14 @@ do
             task.wait(0.5)
             local cur=jd_getLocalActor()
             if cur~=lastActor then
-                if lastActor~=nil then jd_patched=false; jd_killerMotionData={} end
+                if lastActor~=nil then 
+                    jd_patched=false
+                    jd_killerMotionData={} 
+                end
                 lastActor=cur
-                if cur and jd_enabled then jd_applyPatch(cur) end
+                if cur and jd_enabled then 
+                    jd_applyPatch(cur) 
+                end
             end
         end
     end)
@@ -371,8 +396,11 @@ do
     sec_024:Toggle({ 
         Title = "Enable Jane Doe Aimbot", Flag = "jdEnabled", Default = false, Type = "Checkbox",
         Callback = function(on)
-            jd_enabled=on; local actor=jd_getLocalActor()
-            if on and not jd_patched and actor then jd_applyPatch(actor) end
+            jd_enabled=on
+            local actor=jd_getLocalActor()
+            if on and not jd_patched and actor then 
+                jd_applyPatch(actor) 
+            end
         end
     })
     
@@ -380,7 +408,13 @@ do
         Title = "Aimbot (Silent Aim)", Flag = "jdSilentAim", Default = false, Type = "Checkbox",
         Callback = function(on)
             jd_aimbotOn=on
-            local actor=jd_getLocalActor(); if on and not jd_patched and actor then jd_applyPatch(actor) end
+            local actor=jd_getLocalActor()
+            if on and not jd_patched and actor then 
+                jd_applyPatch(actor) 
+            end
+            if not on and jd_patched then
+                -- Keep patch installed but just disable aimbot
+            end
         end
     })
     
@@ -395,7 +429,7 @@ do
     })
     
     sec_024:Slider({ 
-        Title = "Hold Duration (s)", Flag = "jdHoldDur", Value = {Min=0.3,Max=2.0,Default=jd_HOLD_DURATION}, Step = 0.1, 
+        Title = "Hold Duration (s) pc", Flag = "jdHoldDur", Value = {Min=0.3,Max=2.0,Default=jd_HOLD_DURATION}, Step = 0.1, 
         Callback = function(v) jd_HOLD_DURATION=v end 
     })
 
@@ -421,8 +455,15 @@ do
     sec_026:Button({ 
         Title = "Unload Jane Doe", Callback = function()
             if jd_unloaded then return end
-            jd_unloaded=true; jd_enabled=false; jd_aimbotOn=false; jd_axeEnabled=false
+            jd_unloaded=true
+            jd_enabled=false
+            jd_aimbotOn=false
+            jd_axeEnabled=false
             jd_removePatch()
+            if getgenv()._jdConnection then
+                pcall(function() getgenv()._jdConnection:Disconnect() end)
+                getgenv()._jdConnection = nil
+            end
         end
     })
 end
@@ -439,6 +480,10 @@ tabJaneDoe:Section({ Title = "System" }):Button({
         end)
         if ok and rf then
             rfDispatch:uninstall(rf)
+        end
+        if getgenv()._jdConnection then
+            pcall(function() getgenv()._jdConnection:Disconnect() end)
+            getgenv()._jdConnection = nil
         end
         Window:Destroy()
     end
