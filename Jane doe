@@ -429,7 +429,7 @@ do
     })
     
     sec_024:Slider({ 
-        Title = "Hold Duration (s) pc", Flag = "jdHoldDur", Value = {Min=0.3,Max=2.0,Default=jd_HOLD_DURATION}, Step = 0.1, 
+        Title = "Hold Duration (S)  (Pc) ", Flag = "jdHoldDur", Value = {Min=0.3,Max=2.0,Default=jd_HOLD_DURATION}, Step = 0.1, 
         Callback = function(v) jd_HOLD_DURATION=v end 
     })
 
